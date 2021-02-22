@@ -22,12 +22,9 @@ int main(int argc, char *argv[]){
 	std::time_t result = std::time(nullptr);
 	std::time_t target = result - (86400 * days);
 	std::string after = "";
-	std::fstream fout;
-	fout.open("result.txt", std::ios::out);
 	while(1){
 		std::string url = "https://www.reddit.com/r/" + subreddit + "/new.json?sort=new&limit=100" + after;
 		std::string command = "curl -s -A \"A reddit Scrapper\" \"" + url + "\" | jq '.data.children | .[] | .data.created, .data.url' > .temp.txt";
-		std::cout << command << "\n";
 		system(command.c_str());
 		std::fstream fin;
 		fin.open(".temp.txt", std::ios::in);
@@ -36,18 +33,21 @@ int main(int argc, char *argv[]){
 			std::time_t current = std::stoi(temp);
 			if(current < target){
 				fin.close();
-				fout.close();
 				system("rm .temp.txt");
 				exit(0);
 			}
 			fin >> temp;
-			fout << temp << "\n";
+			std::string redditUrl = "www.reddit.com/r/";
+			if(temp.find(redditUrl) != std::string::npos)
+				std::cout << temp.substr(1, temp.length() - 3) << "\n";
 		}
 		command = "curl -s -A \"A reddit Scrapper\" \"" + url + "\" | jq '.data.after' > .temp.txt";
 		system(command.c_str());
 		fin.close();
 		fin.open(".temp.txt", std::ios::in);
 		fin >> temp;
+		if(temp == "null")
+			exit(0);
 		after = "&after=" + temp;
 	}
 }

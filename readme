@@ -4,3 +4,5 @@ This tool requires that you have jq installed and was made for OSX
 usage: ./redditScrapper <subreddit name> <days>
 
 compile: gcc-9 -Wall -std=c++11 -lstdc++ -o redditScrapper redditScrapper.cpp
+
+path: cp redditScrapper /usr/local/bin/redditScrapper
